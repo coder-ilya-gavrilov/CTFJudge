@@ -1,0 +1,9 @@
+.vertical-offset-100{
+    padding-top:100px;
+}
+#app{
+    margin-top: 30px;
+}
+#tasks tbody tr{
+    cursor: pointer;
+}
