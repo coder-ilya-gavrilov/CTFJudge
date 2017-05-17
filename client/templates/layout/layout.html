@@ -1,0 +1,11 @@
+<template name="layout">
+  <div id="app" class="container-fluid">
+    <div class="col-md-4">
+      {{> Template.dynamic template=menu}}
+      {{> Template.dynamic template=scoreboard}}
+    </div>
+    <div class="col-md-8">
+      {{> Template.dynamic template=body}}
+    </div>
+  </div>
+</template>

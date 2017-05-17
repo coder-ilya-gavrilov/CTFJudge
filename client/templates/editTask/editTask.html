@@ -1,0 +1,45 @@
+<template name="editTask">
+  <ul class="list-group">
+    <li class="list-group-item">
+      <form>
+        <div class="form-group">
+          <input type="text" name="taskName" class="form-control" value={{task.name}} placeholder="Название"/>
+        </div>
+        <div class="form-group">
+          <textarea name="taskDescription" class="form-control" value={{task.description}} placeholder="Описание"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="taskAttachment" class="form-control" value={{task.attachment}} placeholder="Ссылка на вложение(если требуется)"/>
+        </div>
+        <div class="form-group">
+          <input type="text" name="taskCategory" class="form-control" value={{task.category}} placeholder="Категория"/>
+        </div>
+        <div class="form-group">
+          <input type="text" name="taskFlag" class="form-control" value={{task.flag}} placeholder="Флаг"/>
+        </div>
+        <div class="form-group">
+          <input type="number" name="taskCost" class="form-control" value={{task.cost}} placeholder="Стоимость"/>
+        </div>
+        <div class="form-group">
+          <select name="taskParent" class="form-control">
+            <option value="" {{taskWithoutParent}}> - Нет предка - </option>
+            {{#each parentTask in tasks}}
+              {{#if isDifferentTask parentTask}}
+                <option value="{{parentTask._id}}" {{taskWithParent parentTask}}>{{parentTask.name}}</option>
+              {{/if}}
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="taskOpened" {{taskOpened}} />
+            Задача открыта
+          </label>
+        </div>
+        <button id="editTask" class="btn btn-success">Изменить задачу</button>
+        <a href="{{pathFor 'tasks.showTask' _id=task._id}}" class="btn btn-danger pull-right">Отменить</a>
+      </form>
+    </li>
+    <a href="#" id="removeTask" class="list-group-item">Удалить задачу</a>
+  </ul>
+</template>

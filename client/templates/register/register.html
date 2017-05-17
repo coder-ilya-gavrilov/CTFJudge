@@ -1,0 +1,27 @@
+<template name="register">
+  <div id="registerForm" class="container">
+    <div class="row vertical-offset-100">
+    	<div class="col-md-4 col-md-offset-4">
+    		<div class="panel panel-default">
+			  	<div class="panel-heading">
+			    	<h3 class="panel-title">Регистрация</h3>
+          </div>
+			  	<div class="panel-body">
+			    	<form>
+		    	  	<div class="form-group">
+		    		    <input class="form-control" placeholder="Логин" name="login" type="text">
+			    		</div>
+			    		<div class="form-group">
+			    			<input class="form-control" placeholder="Пароль" name="password" type="password">
+			    		</div>
+			    		<input class="btn btn-success btn-block" type="submit" id="register" value="Зарегистрироваться">
+      	    </form>
+			    </div>
+  			</div>
+  			<div class="panel panel-default">
+	    		<a href="{{pathFor 'login'}}" class="btn btn-info btn-block">Войти</a>
+  			</div>
+  		</div>
+    </div>
+  </div>
+</template>
