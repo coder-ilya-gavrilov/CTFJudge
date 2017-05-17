@@ -4,20 +4,234 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  {{>main}}
 </body>
-<template name="main">
-    {{#if authorized}}
-        {{>app}}
-    {{else}}
-      {{#if registration}}
-        {{>registerForm}}
-      {{else}}
-        {{>loginForm}}
-      {{/if}}
-    {{/if}}
+<template name="layout">
+  <div id="app" class="container-fluid">
+    <div class="col-md-4">
+      {{> Template.dynamic template=menu}}
+      {{> Template.dynamic template=scoreboard}}
+    </div>
+    <div class="col-md-8">
+      {{> Template.dynamic template=body}}
+    </div>
+  </div>
 </template>
-<template name="loginForm">
+<template name="tasks">
+  <div class="panel panel-default">
+    <table id="tasks" class="table table-hover table-stackable">
+      <thead>
+        <tr>
+          <th>Задача</th>
+          <th>Стоимость</th>
+          <th>Категория</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each task in tasks}}
+          <tr data-id={{task._id}} class={{taskCompletion(task)}}>
+            <td>{{task.name}}</td>
+            <td>{{task.cost}}</td>
+            <td>{{task.category}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{#if isAdmin}}
+      <ui class="list-group">
+        <a href="{{pathFor 'tasks.addTask'}}" class="list-group-item">Добавить задачу</a>
+      </ui>
+    {{/if}}
+  </div>
+</template>
+<template name="addTask">
+  <li class="list-group-item">
+    <form>
+      <div class="form-group">
+        <input type="text" name="taskName" class="form-control" placeholder="Название"/>
+      </div>
+      <div class="form-group">
+        <textarea name="taskDescription" class="form-control" placeholder="Описание"></textarea>
+      </div>
+      <div class="form-group">
+        <input type="text" name="taskAttachment" class="form-control" placeholder="Ссылка на вложение (если требуется)"/>
+      </div>
+      <div class="form-group">
+        <input type="text" name="taskCategory" class="form-control" placeholder="Категория"/>
+      </div>
+      <div class="form-group">
+        <input type="text" name="taskFlag" class="form-control" placeholder="Флаг"/>
+      </div>
+      <div class="form-group">
+        <input type="number" name="taskCost" class="form-control" placeholder="Стоимость"/>
+      </div>
+      <div class="form-group">
+        <select name="taskParent" class="form-control">
+          <option selected value=""> - Нет предка - </option>
+          {{#each task in tasks}}
+            <option value="{{task._id}}">{{task.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" name="taskOpened" />
+          Задача открыта
+        </label>
+      </div>
+      <button id="addTask" class="btn btn-success">Добавить задачу</button>
+      <a href="{{pathFor 'tasks.list'}}" class="btn btn-danger pull-right">Отменить</a>
+    </form>
+  </li>
+</template>
+<template name="menu">
+  <div class="panel panel-primary">
+    <div class="panel-heading">Меню</div>
+    <ul class="list-group">
+      <a href="{{pathFor 'tasks.list'}}" class="list-group-item">Список задач</a>
+      <a href="{{pathFor 'logout'}}" class="list-group-item">Выйти</a>
+    </ul>
+  </div>
+</template>
+<template name="scoreboard">
+  <div class="panel panel-primary">
+    <div class="panel-heading">Участники</div>
+    <ul class="list-group">
+      {{#each user in users}}
+        <a class="list-group-item">
+          <span class="badge">{{user.score}}</span>
+          {{#if isCurrentUser user}}
+            <b>{{user.username}}</b>
+          {{else}}
+            {{user.username}}
+          {{/if}}
+        </a>
+      {{/each}}
+    </ul>
+  </div>
+</template>
+<template name="showTask">
+  <div class="panel panel-{{taskCompletion}}">
+    <div class="panel-heading">{{task.name}} ({{task.cost}})</div>
+    <ul class="list-group">
+      <li class="bg-info list-group-item">{{task.description}}</li>
+      {{#if task.attachment}}
+        <li class="list-group-item"><a target="_blank" href={{task.attachment}}>Вложение</a></li>
+      {{/if}}
+      <li class="list-group-item">{{winners}}</li>
+      {{#unless taskCompleted}}
+        <li class="list-group-item">
+          <div id="resultAlert">
+            {{#if taskFailed}}
+              {{> failTaskMessage }}
+            {{/if}}
+          </div>
+          <form>
+            <div class="form-group">
+              <input type="text" name="flag" class="form-control" placeholder="Флаг"/>
+            </div>
+            <button id="surrenderTask" class="btn btn-success">Сдать задачу</button>
+          </form>
+        </li>
+      {{/unless}}
+    </ul>
+  </div>
+  {{#if isAdmin}}
+    <div class="panel panel-default">
+      <ul class="list-group">
+        <a href="{{pathFor 'tasks.taskAttempts' _id=task._id}}" id="watchAttempts" class="list-group-item">Посмотреть отправки</a>
+        <a href="{{pathFor 'tasks.editTask' _id=task._id}}" id="editing" class="list-group-item">Изменить задачу</a>
+      </ul>
+    </div>
+  {{/if}}
+</template>
+<template name="editTask">
+  <ul class="list-group">
+    <li class="list-group-item">
+      <form>
+        <div class="form-group">
+          <input type="text" name="taskName" class="form-control" value={{task.name}} placeholder="Название"/>
+        </div>
+        <div class="form-group">
+          <textarea name="taskDescription" class="form-control" value={{task.description}} placeholder="Описание"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" name="taskAttachment" class="form-control" value={{task.attachment}} placeholder="Ссылка на вложение(если требуется)"/>
+        </div>
+        <div class="form-group">
+          <input type="text" name="taskCategory" class="form-control" value={{task.category}} placeholder="Категория"/>
+        </div>
+        <div class="form-group">
+          <input type="text" name="taskFlag" class="form-control" value={{task.flag}} placeholder="Флаг"/>
+        </div>
+        <div class="form-group">
+          <input type="number" name="taskCost" class="form-control" value={{task.cost}} placeholder="Стоимость"/>
+        </div>
+        <div class="form-group">
+          <select name="taskParent" class="form-control">
+            <option value="" {{taskWithoutParent}}> - Нет предка - </option>
+            {{#each parentTask in tasks}}
+              {{#if isDifferentTask parentTask}}
+                <option value="{{parentTask._id}}" {{taskWithParent parentTask}}>{{parentTask.name}}</option>
+              {{/if}}
+            {{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="taskOpened" {{taskOpened}} />
+            Задача открыта
+          </label>
+        </div>
+        <button id="editTask" class="btn btn-success">Изменить задачу</button>
+        <a href="{{pathFor 'tasks.showTask' _id=task._id}}" class="btn btn-danger pull-right">Отменить</a>
+      </form>
+    </li>
+    <a href="#" id="removeTask" class="list-group-item">Удалить задачу</a>
+  </ul>
+</template>
+<template name="taskAttempts">
+  <div class="panel panel-default">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Время отправки</th>
+          <th>Пользователь</th>
+          <th>Флаг</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each attempt in attempts}}
+          {{#if attempt.success}}
+            <tr class="success">
+              <td>{{prettifyDate attempt.timestamp}}</td>
+              <td>{{attempt.user}}</td>
+              <td>{{attempt.flag}}</td>
+              <td><a href="#" data-id={{attempt._id}} class="glyphicon glyphicon-remove removeAttempt"></a></td>
+            </tr>
+          {{else}}
+            <tr class="danger">
+              <td>{{prettifyDate attempt.timestamp}}</td>
+              <td>{{attempt.user}}</td>
+              <td>{{attempt.flag}}</td>
+              <td><a href="#" data-id={{attempt._id}} class="glyphicon glyphicon-remove removeAttempt"></a></td>
+            </tr>
+          {{/if}}
+        {{/each}}
+      </tbody>
+    </table>
+    <ul class="list-group">
+      <a href="{{pathFor 'tasks.showTask' _id=task._id}}" class="list-group-item">К задаче</a>
+    </ul>
+  </div>
+</template>
+<template name="failTaskMessage">
+  <div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Ошибся!</strong> С кем не бывает?
+  </div>
+</template>
+<template name="login">
   <div id="loginForm" class="container">
     <div class="row vertical-offset-100">
     	<div class="col-md-4 col-md-offset-4">
@@ -33,18 +247,18 @@
 			    		<div class="form-group">
 			    			<input class="form-control" placeholder="Пароль" name="password" type="password">
 			    		</div>
-			    		<input class="btn btn-md btn-success btn-block" type="submit" id="login" value="Войти">
+			    		<input class="btn btn-success btn-block" type="submit" id="login" value="Войти">
       	    </form>
 			    </div>
   			</div>
   			<div class="panel panel-default">
-	    		<input class="btn btn-md btn-info btn-block" type="submit" id="startRegistration" value="Зарегистрироваться">
+	    		<a href="{{pathFor 'register'}}" class="btn btn-info btn-block">Зарегистрироваться</a>
   			</div>
   		</div>
     </div>
   </div>
 </template>
-<template name="registerForm">
+<template name="register">
   <div id="registerForm" class="container">
     <div class="row vertical-offset-100">
     	<div class="col-md-4 col-md-offset-4">
@@ -60,232 +274,14 @@
 			    		<div class="form-group">
 			    			<input class="form-control" placeholder="Пароль" name="password" type="password">
 			    		</div>
-			    		<input class="btn btn-md btn-success btn-block" type="submit" id="register" value="Зарегистрироваться">
+			    		<input class="btn btn-success btn-block" type="submit" id="register" value="Зарегистрироваться">
       	    </form>
 			    </div>
   			</div>
   			<div class="panel panel-default">
-	    		<input class="btn btn-md btn-info btn-block" type="submit" id="cancelRegistration" value="Войти">
+	    		<a href="{{pathFor 'login'}}" class="btn btn-info btn-block">Войти</a>
   			</div>
   		</div>
     </div>
-  </div>
-</template>
-<template name="app">
-  <div id="app" class="container-fluid">
-    <div class="col-md-4">
-      <ul class="list-group">
-        {{#if currentTask}}
-          <a href="#" class="list-group-item task-details">Список задач</a>
-        {{else}}
-          <a href="#" id="exit" class="list-group-item">Выйти</a>
-        {{/if}}
-      </ul>
-      <div class="panel panel-primary">
-        <div class="panel-heading">Участники</div>
-        <ul class="list-group">
-          {{#each user in users}}
-            <a class="list-group-item">
-              <span class="badge">{{user.score}}</span>
-              {{#if isCurrentUser user}}
-                <b>{{user.username}}</b>
-              {{else}}
-                {{user.username}}
-              {{/if}}
-            </a>
-          {{/each}}
-        </ul>
-      </div>
-    </div>
-    <div class="col-md-8">
-      {{#if currentTask}}
-        {{> taskDetails task=currentTask }}
-      {{else}}
-        <div class="panel panel-default">
-          <table id="tasks" class="table table-hover table-stackable">
-            <thead>
-              <tr>
-                <th>Задача</th>
-                <th>Стоимость</th>
-                <th>Категория</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each task in tasks}}
-                <tr data-id={{task._id}} class={{taskCompletion(task)}}>
-                  <td>{{task.name}}</td>
-                  <td>{{task.cost}}</td>
-                  <td>{{task.category}}</td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>
-          <ui class="list-group">
-            {{#if admin}}
-              {{#if adding}}
-                <li class="list-group-item">
-                  <form>
-                    <div class="form-group">
-                      <input type="text" name="taskName" class="form-control" placeholder="Название"/>
-                    </div>
-                    <div class="form-group">
-                      <textarea name="taskDescription" class="form-control" placeholder="Описание"></textarea>
-                    </div>
-                    <div class="form-group">
-                      <input type="text" name="taskAttachment" class="form-control" placeholder="Ссылка на вложение (если требуется)"/>
-                    </div>
-                    <div class="form-group">
-                      <input type="text" name="taskCategory" class="form-control" placeholder="Категория"/>
-                    </div>
-                    <div class="form-group">
-                      <input type="text" name="taskFlag" class="form-control" placeholder="Флаг"/>
-                    </div>
-                    <div class="form-group">
-                      <input type="number" name="taskCost" class="form-control" placeholder="Стоимость"/>
-                    </div>
-                    <div class="form-group">
-                      <select name="taskParent" class="form-control">
-                        <option selected value=""> - Нет предка - </option>
-                        {{#each task in tasks}}
-                          <option value="{{task._id}}">{{task.name}}</option>
-                        {{/each}}
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label>
-                        <input type="checkbox" name="taskOpened" />
-                        Задача открыта
-                      </label>
-                    </div>
-                    <button id="addTask" class="btn btn-success">Добавить задачу</button>
-                  </form>
-                </li>
-              {{else}}
-                <a href="#" id="adding" class="list-group-item">Добавить задачу</a>
-              {{/if}}
-          {{/if}}
-          </ui>
-        </div>
-      {{/if}}
-    </div>
-  </div>
-</template>
-<template name="taskDetails">
-  <div class="panel panel-{{taskCompletion}}">
-    <div class="panel-heading">{{task.name}} ({{task.cost}})</div>
-    <ul class="list-group">
-      {{#unless editing}}
-        <li class="bg-info list-group-item">{{task.description}}</li>
-        {{#if task.attachment}}
-          <li class="list-group-item"><a target="_blank" href={{task.attachment}}>Вложение</a></li>
-        {{/if}}
-        <li class="list-group-item">{{winners}}</li>
-        {{#unless taskCompleted}}
-          <li class="list-group-item">
-            <div id="resultAlert">
-              {{#if fail}}
-                {{> failTaskMessage }}
-              {{/if}}
-            </div>
-            <form>
-              <div class="form-group">
-                <input type="text" name="flag" class="form-control" placeholder="Флаг"/>
-              </div>
-              <button id="surrenderTask" class="btn btn-success">Сдать задачу</button>
-            </form>
-          </li>
-        {{/unless}}
-      {{/unless}}
-      </ul>
-  </div>
-  {{#if admin}}
-    <div class="panel panel-default">
-      <ul class="list-group">
-        {{#if editing}}
-          <li class="list-group-item">
-            <form>
-              <div class="form-group">
-                <input type="text" name="taskName" class="form-control" value={{task.name}} placeholder="Название"/>
-              </div>
-              <div class="form-group">
-                <textarea name="taskDescription" class="form-control" value={{task.description}} placeholder="Описание"></textarea>
-              </div>
-              <div class="form-group">
-                <input type="text" name="taskAttachment" class="form-control" value={{task.attachment}} placeholder="Ссылка на вложение(если требуется)"/>
-              </div>
-              <div class="form-group">
-                <input type="text" name="taskCategory" class="form-control" value={{task.category}} placeholder="Категория"/>
-              </div>
-              <div class="form-group">
-                <input type="text" name="taskFlag" class="form-control" value={{task.flag}} placeholder="Флаг"/>
-              </div>
-              <div class="form-group">
-                <input type="number" name="taskCost" class="form-control" value={{task.cost}} placeholder="Стоимость"/>
-              </div>
-              <div class="form-group">
-                <select name="taskParent" class="form-control">
-                  <option value="" {{taskWithoutParent}}> - Нет предка - </option>
-                  {{#each parentTask in tasks}}
-                    {{#if isDifferentTask parentTask}}
-                      <option value="{{parentTask._id}}" {{taskWithParent parentTask}}>{{parentTask.name}}</option>
-                    {{/if}}
-                  {{/each}}
-                </select>
-              </div>
-              <div class="form-group">
-                <label>
-                  <input type="checkbox" name="taskOpened" {{taskOpened}} />
-                  Задача открыта
-                </label>
-              </div>
-              <button id="editTask" class="btn btn-success">Изменить задачу</button>
-            </form>
-          </li>
-        {{else}}
-          {{#unless watchAttempts}}
-            <a href="#" id="watchAttempts" class="list-group-item">Посмотреть отправки</a>
-          {{/unless}}
-          <a href="#" id="editing" class="list-group-item">Изменить задачу</a>
-        {{/if}}
-        <a href="#" id="removeTask" class="list-group-item">Удалить задачу</a>
-      </ul>
-      {{#if watchAttempts}}
-        <table class="table">
-        <thead>
-          <tr>
-            <th>Время отправки</th>
-            <th>Пользователь</th>
-            <th>Флаг</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each attempt in attempts}}
-            {{#if attempt.success}}
-              <tr class="success">
-                <td>{{prettifyDate attempt.timestamp}}</td>
-                <td>{{attempt.user}}</td>
-                <td>{{attempt.flag}}</td>
-                <td><a href="#" data-id={{attempt._id}} class="glyphicon glyphicon-remove removeAttempt"></a></td>
-              </tr>
-            {{else}}
-              <tr class="danger">
-                <td>{{prettifyDate attempt.timestamp}}</td>
-                <td>{{attempt.user}}</td>
-                <td>{{attempt.flag}}</td>
-                <td><a href="#" data-id={{attempt._id}} class="glyphicon glyphicon-remove removeAttempt"></a></td>
-              </tr>
-            {{/if}}
-          {{/each}}
-        </tbody>
-      </table>
-      {{/if}}
-    </div>
-  {{/if}}
-</template>
-<template name="failTaskMessage">
-  <div class="alert alert-danger alert-dismissible">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <strong>Ошибся!</strong> С кем не бывает?
   </div>
 </template>
