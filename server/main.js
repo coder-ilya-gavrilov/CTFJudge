@@ -33,14 +33,17 @@ Meteor.startup(() => {
       if (attempt.success)
         Meteor.users.update(this.userId, {$inc: {score: task.cost}});
       Attempts.insert(attempt);
+      for (let newTask of Tasks.find({parent: task._id}).fetch()) {
+        Tasks.update(newTask._id, {$set: {opened: true}});
+      }
       return attempt.success;
     },
-    "addTask": function({ name, description, attachment, category, flag, cost }){
+    "addTask": function({ name, description, attachment, category, flag, cost, parent, opened }){
       if (!Roles.userIsInRole(this.userId, "admin"))
         return;
-      Tasks.insert({ name, description, attachment, category, flag, cost });
+      Tasks.insert({ name, description, attachment, category, flag, cost, parent, opened });
     },
-    "editTask": function({ task, name, description, attachment, category, flag, cost }){
+    "editTask": function({ task, name, description, attachment, category, flag, cost, parent, opened }){
       if (!Roles.userIsInRole(this.userId, "admin"))
         return;
       var myTask = Tasks.findOne(task);
@@ -48,7 +51,7 @@ Meteor.startup(() => {
       var attempts = Attempts.find({task, success: true}).fetch();
       for(var i = 0; i < attempts.length; i++)
         Meteor.users.update(attempts[i].userId, {$inc: {score: delta}});
-      Tasks.update(task, { name, description, attachment, category, flag, cost })
+      Tasks.update(task, { name, description, attachment, category, flag, cost, parent, opened })
     },
     "removeTask": function({ task }){
       if (!Roles.userIsInRole(this.userId, "admin"))
@@ -77,7 +80,7 @@ Meteor.startup(() => {
     if (Roles.userIsInRole(this.userId, "admin"))
       return Tasks.find({});
     else
-      return Tasks.find({}, {fields: {name: 1, cost: 1, attachment: 1, description: 1, category: 1}});
+      return Tasks.find({opened: true}, {fields: {name: 1, cost: 1, attachment: 1, description: 1, category: 1}});
   })
   Meteor.publish('attempts', function(){
     if (Roles.userIsInRole(this.userId, "admin"))
