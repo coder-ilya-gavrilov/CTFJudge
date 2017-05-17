@@ -1,0 +1,27 @@
+<template name="tasks">
+  <div class="panel panel-default">
+    <table id="tasks" class="table table-hover table-stackable">
+      <thead>
+        <tr>
+          <th>Задача</th>
+          <th>Стоимость</th>
+          <th>Категория</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each task in tasks}}
+          <tr data-id={{task._id}} class={{taskCompletion(task)}}>
+            <td>{{task.name}}</td>
+            <td>{{task.cost}}</td>
+            <td>{{task.category}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{#if isAdmin}}
+      <ui class="list-group">
+        <a href="{{pathFor 'tasks.addTask'}}" class="list-group-item">Добавить задачу</a>
+      </ui>
+    {{/if}}
+  </div>
+</template>

@@ -1,0 +1,17 @@
+<template name="scoreboard">
+  <div class="panel panel-primary">
+    <div class="panel-heading">Участники</div>
+    <ul class="list-group">
+      {{#each user in users}}
+        <a class="list-group-item">
+          <span class="badge">{{user.score}}</span>
+          {{#if isCurrentUser user}}
+            <b>{{user.username}}</b>
+          {{else}}
+            {{user.username}}
+          {{/if}}
+        </a>
+      {{/each}}
+    </ul>
+  </div>
+</template>

@@ -1,0 +1,35 @@
+<template name="showTask">
+  <div class="panel panel-{{taskCompletion}}">
+    <div class="panel-heading">{{task.name}} ({{task.cost}})</div>
+    <ul class="list-group">
+      <li class="bg-info list-group-item">{{task.description}}</li>
+      {{#if task.attachment}}
+        <li class="list-group-item"><a target="_blank" href={{task.attachment}}>Вложение</a></li>
+      {{/if}}
+      <li class="list-group-item">{{winners}}</li>
+      {{#unless taskCompleted}}
+        <li class="list-group-item">
+          <div id="resultAlert">
+            {{#if taskFailed}}
+              {{> failTaskMessage }}
+            {{/if}}
+          </div>
+          <form>
+            <div class="form-group">
+              <input type="text" name="flag" class="form-control" placeholder="Флаг"/>
+            </div>
+            <button id="surrenderTask" class="btn btn-success">Сдать задачу</button>
+          </form>
+        </li>
+      {{/unless}}
+    </ul>
+  </div>
+  {{#if isAdmin}}
+    <div class="panel panel-default">
+      <ul class="list-group">
+        <a href="{{pathFor 'tasks.taskAttempts' _id=task._id}}" id="watchAttempts" class="list-group-item">Посмотреть отправки</a>
+        <a href="{{pathFor 'tasks.editTask' _id=task._id}}" id="editing" class="list-group-item">Изменить задачу</a>
+      </ul>
+    </div>
+  {{/if}}
+</template>
