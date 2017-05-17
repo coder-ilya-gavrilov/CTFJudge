@@ -27,7 +27,8 @@ Meteor.startup(() => {
         user: Meteor.users.findOne(this.userId).username,
         success: task.flag == flag.toLowerCase().trim(),
         flag,
-        task: task._id
+        task: task._id,
+        timestamp: Date.now()
       }
       if (attempt.success)
         Meteor.users.update(this.userId, {$inc: {score: task.cost}});
@@ -82,6 +83,6 @@ Meteor.startup(() => {
     if (Roles.userIsInRole(this.userId, "admin"))
       return Attempts.find({});
     else
-      return Attempts.find({}, {fields: {user: 1, success: 1, userId: 1, task: 1}});
+      return Attempts.find({}, {fields: {user: 1, success: 1, userId: 1, task: 1, timestamp: 1}});
   })
 });
