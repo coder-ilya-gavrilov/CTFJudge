@@ -32,8 +32,8 @@ Template.registerForm.events({
   },
   'click #register'(event, instance){
     event.preventDefault();
-    var username = instance.$("[name='login']").val();
-    var password = instance.$("[name='password']").val();
+    var username = instance.$("[name='login']").val().trim();
+    var password = instance.$("[name='password']").val().trim();
     if (username == "" || password == null)
       return;
     Meteor.call("register", { username, password })
@@ -47,8 +47,8 @@ Template.loginForm.events({
   },
   'click #login'(event, instance){
     event.preventDefault();
-    var login = instance.$("[name='login']").val();
-    var password = instance.$("[name='password']").val();
+    var login = instance.$("[name='login']").val().trim();
+    var password = instance.$("[name='password']").val().trim();
     if (login == "" || password == null)
       return;
     Meteor.loginWithPassword(login, password)

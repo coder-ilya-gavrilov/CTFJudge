@@ -158,7 +158,7 @@
 </template>
 <template name="taskDetails">
   <div class="panel panel-{{taskCompletion}}">
-    <div class="panel-heading">{{task.name}}</div>
+    <div class="panel-heading">{{task.name}} ({{task.cost}})</div>
     <ul class="list-group">
       {{#unless editing}}
         <li class="bg-info list-group-item">{{task.description}}</li>
