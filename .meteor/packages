@@ -24,3 +24,7 @@ accounts-password
 simple:rest
 session
 momentjs:moment
+kadira:flow-router
+kadira:blaze-layout
+zimme:active-route
+arillo:flow-router-helpers
