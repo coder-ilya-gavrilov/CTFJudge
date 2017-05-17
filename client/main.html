@@ -223,6 +223,7 @@
         <table class="table">
         <thead>
           <tr>
+            <th>Время отправки</th>
             <th>Пользователь</th>
             <th>Флаг</th>
             <th></th>
@@ -232,12 +233,14 @@
           {{#each attempt in attempts}}
             {{#if attempt.success}}
               <tr class="success">
+                <td>{{prettifyDate attempt.timestamp}}</td>
                 <td>{{attempt.user}}</td>
                 <td>{{attempt.flag}}</td>
                 <td><a href="#" data-id={{attempt._id}} class="glyphicon glyphicon-remove removeAttempt"></a></td>
               </tr>
             {{else}}
               <tr class="danger">
+                <td>{{prettifyDate attempt.timestamp}}</td>
                 <td>{{attempt.user}}</td>
                 <td>{{attempt.flag}}</td>
                 <td><a href="#" data-id={{attempt._id}} class="glyphicon glyphicon-remove removeAttempt"></a></td>

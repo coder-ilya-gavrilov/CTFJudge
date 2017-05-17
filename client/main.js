@@ -5,6 +5,7 @@ import { Session } from 'meteor/session';
 import { Roles } from 'meteor/alanning:roles';
 import Tasks from "../shared/tasks.collection";
 import Attempts from "../shared/attempts.collection";
+import { moment } from 'meteor/momentjs:moment';
 
 import './main.html';
 
@@ -21,6 +22,9 @@ Template.main.helpers({
   registration(){
     return Session.get("registration");
   }
+});
+Template.registerHelper("prettifyDate", function(timestamp) {
+    return moment(timestamp).format('DD.MM.YYYY HH:mm:ss');
 });
 Template.registerForm.events({
   'click #cancelRegistration'(event, instance){
