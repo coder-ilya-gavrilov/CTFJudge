@@ -82,6 +82,8 @@ Template.app.helpers({
     return Session.get("adding");
   },
   taskCompletion(task){
+    if (task.opened === false) 
+      return "warning";
     var result = Attempts.find({task: task._id, userId: Meteor.userId()}).count();
     if (result == 0)
       return "default";
@@ -117,7 +119,9 @@ Template.app.events({
       attachment: instance.$("[name='taskAttachment']").val(),
       category: instance.$("[name='taskCategory']").val(),
       flag: instance.$("[name='taskFlag']").val().toLowerCase().trim(),
-      cost: parseInt(instance.$("[name='taskCost']").val())
+      cost: parseInt(instance.$("[name='taskCost']").val()),
+      parent: instance.$("[name='taskParent']").val(),
+      opened: instance.$("[name='taskOpened']").is(':checked')
     })
     instance.$("[name='taskName']").val("");
     instance.$("[name='taskDescription']").val("");
@@ -125,6 +129,10 @@ Template.app.events({
     instance.$("[name='taskCategory']").val("");
     instance.$("[name='taskFlag']").val("");
     instance.$("[name='taskCost']").val("");
+    instance.$("[name='taskOpened']").prop("checked", false);
+    instance.$("[name='taskParent'] option").prop("selected", function() {
+      return this.defaultSelected;
+    });
     Session.set("adding", false);
   },
   'click #adding'(event, instance){
@@ -138,11 +146,14 @@ Template.taskDetails.onRendered(function(){
   Session.set("watchAttempts", false);
 })
 Template.taskDetails.helpers({
+  tasks(){
+    return Tasks.find({}, {sort: {category: 1, cost: 1}});
+  },
   watchAttempts(){
     return Session.get("watchAttempts");
   },
   attempts(){
-    return Attempts.find({task: this.task._id})
+    return Attempts.find({task: this.task._id}, {sort: {timestamp: 1}})
   },
   editing(){
     return Session.get("editing")
@@ -151,6 +162,8 @@ Template.taskDetails.helpers({
     return Roles.userIsInRole(Meteor.userId(), "admin");
   },
   taskCompletion(){
+    if (this.task.opened === false)
+      return "warning";
     var result = Attempts.find({task: this.task._id, userId: Meteor.userId()}).count();
     if (result == 0)
       return "default";
@@ -169,6 +182,24 @@ Template.taskDetails.helpers({
   fail(){
     return Session.get("fail");
   },
+  taskWithoutParent() {
+    if (this.task.parent)
+      return "selected";
+    return "";
+  },
+  taskWithParent(parentTask) {
+    if (this.task.parent == parentTask._id)
+      return "selected";
+    return "";
+  },
+  taskOpened() {
+    if (this.task.opened)
+      return "checked";
+    return "";
+  },
+  isDifferentTask(task) {
+    return this.task._id != task._id;
+  }
 });
 Template.taskDetails.events({
   'click #watchAttempts'(event, instance){
@@ -202,7 +233,9 @@ Template.taskDetails.events({
       attachment: instance.$("[name='taskAttachment']").val(),
       category: instance.$("[name='taskCategory']").val(),
       flag: instance.$("[name='taskFlag']").val().toLowerCase().trim(),
-      cost: parseInt(instance.$("[name='taskCost']").val())
+      cost: parseInt(instance.$("[name='taskCost']").val()),
+      parent: instance.$("[name='taskParent']").val(),
+      opened: instance.$("[name='taskOpened']").is(':checked')
     });
     Session.set("editing", false);
   },
