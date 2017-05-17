@@ -31,6 +31,12 @@ FlowRouter.route('/logout', {
       FlowRouter.go('home');
   }
 });
+FlowRouter.route('/scoreboard', {
+  name: 'scoreboard',
+  action: function(params){
+    BlazeLayout.render("layout", {menu: "menu", body: "scoreboard", fullTable: true});
+  }
+});
 FlowRouter.route('/addTask', {
   name: 'tasks.addTask',
   action: function(params){
