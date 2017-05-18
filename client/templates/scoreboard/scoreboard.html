@@ -1,17 +1,33 @@
 <template name="scoreboard">
   <div class="panel panel-primary">
-    <div class="panel-heading">Участники</div>
+    <div class="panel-heading">
+      {{#if fullTable}}
+        Положение участников
+      {{else}}
+        Участники
+      {{/if}}
+    </div>
     <ul class="list-group">
       {{#each user in users}}
-        <a class="list-group-item">
-          <span class="badge">{{user.score}}</span>
-          {{#if isCurrentUser user}}
-            <b>{{user.username}}</b>
-          {{else}}
-            {{user.username}}
-          {{/if}}
-        </a>
+        {{#if needToShow @index user}}
+          <a class="list-group-item">
+            <span class="badge">{{user.score}}</span>
+            {{addOneTo @index}}. 
+            {{#if isCurrentUser user}}
+              <b>{{user.username}}</b>
+            {{else}}
+              {{user.username}}
+            {{/if}}
+          </a>
+        {{/if}}
       {{/each}}
     </ul>
+    {{#unless fullTable}}
+      <ul class="list-group">
+        <a class="list-group-item" id="showFullTable" href="{{pathFor 'scoreboard'}}">
+          Текущее положение участников
+        </a>
+      </ul>
+    {{/unless}}
   </div>
 </template>

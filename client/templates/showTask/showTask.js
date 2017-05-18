@@ -41,6 +41,6 @@ Template.showTask.events({
   },
   'click .alert-dismissible .close'(event, instance){
     event.preventDefault();
-    Session.set("fail", false);
+    Session.set("taskFailed", false);
   }
 })
