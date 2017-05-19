@@ -1,0 +1,16 @@
+<template name="showUser">
+  <div class="panel panel-default">
+    <div class="panel-heading">{{user.username}} ({{user.score}})</div>
+    <ul class="list-group">
+      <li class="list-group-item">{{solutions}}</li>
+      {{#if isAdmin}}
+        <li class="list-group-item">
+          <label>
+            <input type="checkbox" name="showUser" {{checkedIfVisible}} />
+            Показывать пользователя в таблице?
+          </label>
+        </li>
+      {{/if}}
+    </ul>
+  </div>
+</template>
