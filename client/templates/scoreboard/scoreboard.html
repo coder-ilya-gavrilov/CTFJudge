@@ -10,7 +10,7 @@
     <ul class="list-group">
       {{#each user in users}}
         {{#if needToShow @index user}}
-          <a class="list-group-item">
+          <a class="list-group-item" href="{{pathFor 'users.showUser' _id=user._id}}">
             <span class="badge">{{user.score}}</span>
             {{addOneTo @index}}. 
             {{#if isCurrentUser user}}
@@ -30,4 +30,24 @@
       </ul>
     {{/unless}}
   </div>
+  
+  {{#if isAdmin}}
+    {{#if fullTable}}
+      <div class="panel panel-default">
+        <div class="panel-heading">Скрытые пользователи</div>
+        <ul class="list-group">
+          {{#each user in invisibleUsers}}
+            <a class="list-group-item" href="{{pathFor 'users.showUser' _id=user._id}}">
+              <span class="badge">{{user.score}}</span>
+              {{#if isCurrentUser user}}
+                <b>{{user.username}}</b>
+              {{else}}
+                {{user.username}}
+              {{/if}}
+            </a>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  {{/if}}
 </template>

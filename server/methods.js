@@ -62,6 +62,11 @@ Meteor.startup(function(){
       if (attempt.success)
         Meteor.users.update(attempt.userId, {$inc: {score: -Tasks.findOne(attempt.task).cost}});
       Attempts.remove(attempt);
+    },
+    "changeVisibility": function({ userId, visibility }) {
+      if (!Roles.userIsInRole(this.userId, "admin"))
+        return;
+      Meteor.users.update(userId, {$set: {visible: visibility}});
     }
   })
 })

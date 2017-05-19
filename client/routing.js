@@ -37,6 +37,12 @@ FlowRouter.route('/scoreboard', {
     BlazeLayout.render("layout", {menu: "menu", body: "scoreboard", fullTable: true});
   }
 });
+FlowRouter.route('/users/:_id', {
+  name: 'users.showUser',
+  action: function(params){
+    BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "showUser"});
+  }
+});
 FlowRouter.route('/addTask', {
   name: 'tasks.addTask',
   action: function(params){
