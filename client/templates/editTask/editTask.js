@@ -3,28 +3,35 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 
 Template.editTask.helpers({
   task(){
-    return Tasks.findOne(FlowRouter.getParam('_id'));
+    return Tasks.findOne(FlowRouter.getParam('_id')) || {};
   },
   tasks(){
     return Tasks.find({}, {sort: {category: 1, cost: 1}});
   },
   taskOpened() {
-    if (this.task.opened)
+    let task = Tasks.findOne(FlowRouter.getParam('_id')) || {};
+    if (task.opened)
       return "checked";
     return "";
   },
   taskWithoutParent() {
-    if (this.task.parent)
+    let task = Tasks.findOne(FlowRouter.getParam('_id')) || {};
+    if (task.parent)
       return "selected";
     return "";
   },
   taskWithParent(parentTask) {
-    if (this.task.parent == parentTask._id)
+    let task = Tasks.findOne(FlowRouter.getParam('_id')) || {};
+    if (task.parent == parentTask._id)
       return "selected";
     return "";
   },
-  isDifferentTask(task) {
-    return this.task._id != task._id;
+  isDifferentTask(otherTask) {
+    let task = Tasks.findOne(FlowRouter.getParam('_id')) || {};
+    return task._id != otherTask._id;
+  },
+  editing() {
+    return FlowRouter.getParam('_id');
   }
 });
 Template.editTask.events({
@@ -35,19 +42,34 @@ Template.editTask.events({
       FlowRouter.go('tasks.list');
     }
   },
-  'click #editTask'(event, instance){
+  'click #save'(event, instance){
     event.preventDefault();
-    Meteor.call("editTask", {
-      task: Session.get("currentTask"),
-      name: instance.$("[name='taskName']").val(),
-      description: instance.$("[name='taskDescription']").val(),
-      attachment: instance.$("[name='taskAttachment']").val(),
-      category: instance.$("[name='taskCategory']").val(),
-      flag: instance.$("[name='taskFlag']").val().toLowerCase().trim(),
-      cost: parseInt(instance.$("[name='taskCost']").val()),
-      parent: instance.$("[name='taskParent']").val(),
-      opened: instance.$("[name='taskOpened']").is(':checked')
-    });
-    FlowRouter.go('tasks.showTask', {_id: FlowRouter.getParam("_id")});
+    let id = FlowRouter.getParam('_id');
+    if (id) {
+      Meteor.call("editTask", {
+        task: id,
+        name: instance.$("[name='taskName']").val(),
+        description: instance.$("[name='taskDescription']").val(),
+        attachment: instance.$("[name='taskAttachment']").val(),
+        category: instance.$("[name='taskCategory']").val(),
+        flag: instance.$("[name='taskFlag']").val().toLowerCase().trim(),
+        cost: parseInt(instance.$("[name='taskCost']").val()),
+        parent: instance.$("[name='taskParent']").val(),
+        opened: instance.$("[name='taskOpened']").is(':checked')
+      });
+      FlowRouter.go('tasks.show', {_id: id});
+    } else {
+      Meteor.call("addTask", {
+        name: instance.$("[name='taskName']").val(),
+        description: instance.$("[name='taskDescription']").val(),
+        attachment: instance.$("[name='taskAttachment']").val(),
+        category: instance.$("[name='taskCategory']").val(),
+        flag: instance.$("[name='taskFlag']").val().toLowerCase().trim(),
+        cost: parseInt(instance.$("[name='taskCost']").val()),
+        parent: instance.$("[name='taskParent']").val(),
+        opened: instance.$("[name='taskOpened']").is(':checked')
+      })
+      FlowRouter.go('home');
+    }
   }
 });

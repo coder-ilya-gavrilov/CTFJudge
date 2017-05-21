@@ -27,8 +27,8 @@
   {{#if isAdmin}}
     <div class="panel panel-default">
       <ul class="list-group">
-        <a href="{{pathFor 'tasks.taskAttempts' _id=task._id}}" id="watchAttempts" class="list-group-item">Посмотреть отправки</a>
-        <a href="{{pathFor 'tasks.editTask' _id=task._id}}" id="editing" class="list-group-item">Изменить задачу</a>
+        <a href="{{pathFor 'tasks.attempts' _id=task._id}}" id="watchAttempts" class="list-group-item">Посмотреть отправки</a>
+        <a href="{{pathFor 'tasks.edit' _id=task._id}}" id="editing" class="list-group-item">Изменить задачу</a>
       </ul>
     </div>
   {{/if}}

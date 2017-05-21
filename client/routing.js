@@ -38,15 +38,9 @@ FlowRouter.route('/scoreboard', {
   }
 });
 FlowRouter.route('/users/:_id', {
-  name: 'users.showUser',
+  name: 'users.show',
   action: function(params){
     BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "showUser"});
-  }
-});
-FlowRouter.route('/addTask', {
-  name: 'tasks.addTask',
-  action: function(params){
-    BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "addTask"})
   }
 });
 FlowRouter.route('/tasks', {
@@ -55,20 +49,26 @@ FlowRouter.route('/tasks', {
     BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "tasks"})
   }
 });
+FlowRouter.route('/tasks/add', {
+  name: 'tasks.add',
+  action: function(params){
+    BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "editTask"})
+  }
+});
 FlowRouter.route('/tasks/:_id', {
-  name: "tasks.showTask",
+  name: "tasks.show",
   action: function(params){
     BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "showTask"});
   }
 });
 FlowRouter.route('/tasks/:_id/edit', {
-  name: "tasks.editTask",
+  name: "tasks.edit",
   action: function(params){
     BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "editTask"});
   }
 });
 FlowRouter.route('/tasks/:_id/attempts', {
-  name: "tasks.taskAttempts",
+  name: "tasks.attempts",
   action: function(params){
     BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "taskAttempts"});
   }
