@@ -3,29 +3,37 @@
     <li class="list-group-item">
       <form>
         <div class="form-group">
-          <input type="text" name="taskName" class="form-control" value={{task.name}} placeholder="Название" />
+          <label for="taskName">Название</label>
+          <input type="text" id="taskName" name="taskName" class="form-control" value={{task.name}} />
         </div>
         <div class="form-group">
-          <textarea name="taskDescription" class="form-control" value={{task.description}} placeholder="Описание"></textarea>
+          <label for="taskDescription">Описание</label>
+          <textarea id="taskDescription" name="taskDescription" class="form-control" value={{task.description}}></textarea>
         </div>
         <div class="form-group">
-          <input type="text" name="taskAttachment" class="form-control" value={{task.attachment}} placeholder="Ссылка на вложение (если требуется)" />
+          <label for="taskAttachment">Ссылка на вложение (необязательно)</label>
+          <input type="text" id="taskAttachment" name="taskAttachment" class="form-control" value={{task.attachment}} />
         </div>
         <div class="form-group">
-          <input type="text" name="taskCategory" class="form-control" value={{task.category}} placeholder="Категория" />
+          <label for="taskCategory">Категория</label>
+          <input type="text" id="taskCategory" name="taskCategory" class="form-control" value={{task.category}} />
         </div>
         <div class="form-group">
-          <input type="text" name="taskFlag" class="form-control" value={{task.flag}} placeholder="Флаг" />
+          <label for="taskFlag">Флаг</label>
+          <input type="text" id="taskFlag" name="taskFlag" class="form-control" value={{task.flag}} />
         </div>
         <div class="form-group">
-          <input type="number" name="taskCost" class="form-control" value={{task.cost}} placeholder="Стоимость" />
+          <label for="taskCost">Стоимость</label>
+          <input type="number" id="taskCost" name="taskCost" class="form-control" value={{task.cost}} />
         </div>
         <div class="form-group">
-          <input type="number" name="taskPenalty" class="form-control" value={{task.penalty}} placeholder="Штраф" />
+          <label for="taskPenalty">Штраф</label>
+          <input type="number" id="taskPenalty" name="taskPenalty" class="form-control" value={{task.penalty}} />
         </div>
         <div class="form-group">
-          <select name="taskParent" class="form-control">
-            <option value="" {{taskWithoutParent}}> - Нет предка - </option>
+          <label for="taskParent">Задача-предок</label>
+          <select id="taskParent" name="taskParent" class="form-control">
+            <option value="" {{taskWithoutParent}}> - Отсутствует - </option>
             {{#each parentTask in tasks}}
               {{#if isDifferentTask parentTask}}
                 <option value="{{parentTask._id}}" {{taskWithParent parentTask}}>{{parentTask.name}}</option>
