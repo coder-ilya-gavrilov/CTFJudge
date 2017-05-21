@@ -1,6 +1,8 @@
 <template name="showTask">
   <div class="panel panel-{{taskCompletion}}">
-    <div class="panel-heading">{{task.name}} ({{task.cost}})</div>
+    <div class="panel-heading">
+      {{task.name}}
+      ({{task.cost}}{{#if task.penalty}} / &ndash;{{task.penalty}}{{/if}})</div>
     <ul class="list-group">
       <li class="bg-info list-group-item">{{task.description}}</li>
       {{#if task.attachment}}
@@ -16,7 +18,8 @@
           </div>
           <form>
             <div class="form-group">
-              <input type="text" name="flag" class="form-control" placeholder="Флаг"/>
+              <label for="flag">Флаг</label>
+              <input type="text" id="flag" name="flag" class="form-control"/>
             </div>
             <button id="surrenderTask" class="btn btn-success">Сдать задачу</button>
           </form>
@@ -27,8 +30,8 @@
   {{#if isAdmin}}
     <div class="panel panel-default">
       <ul class="list-group">
-        <a href="{{pathFor 'tasks.taskAttempts' _id=task._id}}" id="watchAttempts" class="list-group-item">Посмотреть отправки</a>
-        <a href="{{pathFor 'tasks.editTask' _id=task._id}}" id="editing" class="list-group-item">Изменить задачу</a>
+        <a href="{{pathFor 'tasks.attempts' _id=task._id}}" id="watchAttempts" class="list-group-item">Посмотреть отправки</a>
+        <a href="{{pathFor 'tasks.edit' _id=task._id}}" id="editing" class="list-group-item">Изменить задачу</a>
       </ul>
     </div>
   {{/if}}

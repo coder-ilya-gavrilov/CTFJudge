@@ -10,7 +10,7 @@
     <ul class="list-group">
       {{#each user in users}}
         {{#if needToShow @index user}}
-          <a class="list-group-item" href="{{pathFor 'users.showUser' _id=user._id}}">
+          <a class="list-group-item" href="{{pathFor 'users.show' _id=user._id}}">
             <span class="badge">{{user.score}}</span>
             {{addOneTo @index}}. 
             {{#if isCurrentUser user}}
@@ -37,7 +37,7 @@
         <div class="panel-heading">Скрытые пользователи</div>
         <ul class="list-group">
           {{#each user in invisibleUsers}}
-            <a class="list-group-item" href="{{pathFor 'users.showUser' _id=user._id}}">
+            <a class="list-group-item" href="{{pathFor 'users.show' _id=user._id}}">
               <span class="badge">{{user.score}}</span>
               {{#if isCurrentUser user}}
                 <b>{{user.username}}</b>

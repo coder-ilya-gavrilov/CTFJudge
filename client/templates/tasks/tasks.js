@@ -20,6 +20,6 @@ Template.tasks.helpers({
 });
 Template.tasks.events({
   'click #tasks tbody tr td'(event, instance){
-    FlowRouter.go('tasks.showTask', {_id: instance.$(event.target).parent("tr").attr("data-id")})
+    FlowRouter.go('tasks.show', {_id: instance.$(event.target).parent("tr").attr("data-id")})
   },
 });

@@ -23,44 +23,56 @@ Meteor.startup(function(){
       }
       if (attempt.success)
         Meteor.users.update(this.userId, {$inc: {score: task.cost}});
+      else
+        Meteor.users.update(this.userId, {$inc: {score: -task.penalty}});
       Attempts.insert(attempt);
       for (let newTask of Tasks.find({parent: task._id}).fetch()) {
         Tasks.update(newTask._id, {$set: {opened: true}});
       }
       return attempt.success;
     },
-    "addTask": function({ name, description, attachment, category, flag, cost, parent, opened }){
+    "addTask": function({ name, description, attachment, category, flag, cost, penalty, parent, opened }){
       if (!Roles.userIsInRole(this.userId, "admin"))
         return;
-      Tasks.insert({ name, description, attachment, category, flag, cost, parent, opened });
+      Tasks.insert({ name, description, attachment, category, flag, cost, penalty, parent, opened });
     },
-    "editTask": function({ task, name, description, attachment, category, flag, cost, parent, opened }){
+    "editTask": function({ task, name, description, attachment, category, flag, cost, penalty, parent, opened }){
       if (!Roles.userIsInRole(this.userId, "admin"))
         return;
-      var myTask = Tasks.findOne(task);
-      var delta = cost - myTask.cost;
-      var attempts = Attempts.find({task, success: true}).fetch();
-      for(var i = 0; i < attempts.length; i++)
-        Meteor.users.update(attempts[i].userId, {$inc: {score: delta}});
-      Tasks.update(task, { name, description, attachment, category, flag, cost, parent, opened })
+      let myTask = Tasks.findOne(task);
+      let costDelta = cost - myTask.cost;
+      let penaltyDelta = penalty - myTask.penalty;
+      let attempts = Attempts.find({task}).fetch();
+      for (let i = 0; i < attempts.length; i++)
+        if (attempts[i].success)
+          Meteor.users.update(attempts[i].userId, {$inc: {score: costDelta}});
+        else
+          Meteor.users.update(attempts[i].userId, {$inc: {score: -penaltyDelta}});
+      Tasks.update(task, { name, description, attachment, category, flag, cost, penalty, parent, opened });
     },
     "removeTask": function({ task }){
       if (!Roles.userIsInRole(this.userId, "admin"))
         return;
-      var attempts = Attempts.find({task}).fetch();
-      for(var i = 0; i < attempts.length; i++) {
-        if (attempts[i].success)
-          Meteor.users.update(attempts[i].userId, {$inc: {score: -Tasks.findOne(attempts[i].task).cost}});
-        Attempts.remove(attempts[i]);
+      let attempts = Attempts.find({task}).fetch();
+      let myTask = Tasks.findOne(task);
+      for (let attempt of attempts) {
+        if (attempt.success)
+          Meteor.users.update(attempt.userId, {$inc: {score: -myTask.cost}});
+        else
+          Meteor.users.update(attempt.userId, {$inc: {score: myTask.penalty}});
+        Attempts.remove(attempt);
       }
       Tasks.remove(task);
     },
     "removeAttempt": function({ attempt }){
       if (!Roles.userIsInRole(this.userId, "admin"))
         return;
-      var attempt = Attempts.findOne(attempt);
-      if (attempt.success)
-        Meteor.users.update(attempt.userId, {$inc: {score: -Tasks.findOne(attempt.task).cost}});
+      let myAttempt = Attempts.findOne(attempt);
+      let myTask = Tasks.findOne(myAttempt.task);
+      if (myAttempt.success)
+        Meteor.users.update(myAttempt.userId, {$inc: {score: -myTask.cost}});
+      else
+        Meteor.users.update(myAttempt.userId, {$inc: {score: myTask.penalty}});
       Attempts.remove(attempt);
     },
     "changeVisibility": function({ userId, visibility }) {
