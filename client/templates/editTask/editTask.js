@@ -51,7 +51,8 @@ Template.editTask.events({
       attachment: instance.$("[name='taskAttachment']").val(),
       category: instance.$("[name='taskCategory']").val(),
       flag: instance.$("[name='taskFlag']").val().toLowerCase().trim(),
-      cost: parseInt(instance.$("[name='taskCost']").val()),
+      cost: parseInt(instance.$("[name='taskCost']").val()) || 0,
+      penalty: parseInt(instance.$("[name='taskPenalty']").val()) || 0,
       parent: instance.$("[name='taskParent']").val(),
       opened: instance.$("[name='taskOpened']").is(':checked')
     };

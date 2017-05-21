@@ -1,6 +1,8 @@
 <template name="showTask">
   <div class="panel panel-{{taskCompletion}}">
-    <div class="panel-heading">{{task.name}} ({{task.cost}})</div>
+    <div class="panel-heading">
+      {{task.name}}
+      ({{task.cost}}{{#if task.penalty}} / &ndash;{{task.penalty}}{{/if}})</div>
     <ul class="list-group">
       <li class="bg-info list-group-item">{{task.description}}</li>
       {{#if task.attachment}}
