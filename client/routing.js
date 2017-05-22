@@ -70,6 +70,12 @@ FlowRouter.route('/tasks/:_id/edit', {
 FlowRouter.route('/tasks/:_id/attempts', {
   name: "tasks.attempts",
   action: function(params){
-    BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "taskAttempts"});
+    BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "attempts"});
+  }
+});
+FlowRouter.route('/attempts', {
+  name: "attempts.list",
+  action: function(params){
+    BlazeLayout.render("layout", {menu: "menu", scoreboard: "scoreboard", body: "attempts"})
   }
 });

@@ -1,0 +1,35 @@
+<template name="attempts">
+  <div class="panel panel-default">
+    <table class="table">
+      <thead>
+        <tr>
+          {{#if showTask}}
+            <th>Задача</th>
+          {{/if}}
+          <th>Пользователь</th>
+          <th>Время отправки</th>
+          <th>Флаг</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each attempt in attempts}}
+          <tr class="{{getClass attempt}}">
+            {{#if showTask}}
+              <td>{{getTask attempt}}</td>
+            {{/if}}
+            <td>{{attempt.user}}</td>
+            <td>{{prettifyDate attempt.timestamp}}</td>
+            <td>{{attempt.flag}}</td>
+            <td><a href="#" data-id={{attempt._id}} class="glyphicon glyphicon-remove removeAttempt"></a></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{#unless showTask}}
+      <ul class="list-group">
+        <a href="{{pathFor 'tasks.show' _id=task._id}}" class="list-group-item">К задаче</a>
+      </ul>
+    {{/unless}}
+  </div>
+</template>
