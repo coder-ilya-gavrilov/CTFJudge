@@ -4,7 +4,7 @@ import Attempts from "/shared/attempts.collection";
 
 Meteor.startup(function(){
   Meteor.publish('users', function() {
-    return Meteor.users.find({}, {fields: { username: 1, score: 1, visible: 1 }});
+    return Meteor.users.find({}, {fields: { username: 1, score: 1, visible: 1, lastSuccess: 1 }});
   });
   Meteor.publish('tasks', function(){
     if (Roles.userIsInRole(this.userId, "admin"))
