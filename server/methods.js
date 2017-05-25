@@ -22,7 +22,7 @@ Meteor.startup(function(){
         timestamp: Date.now()
       }
       if (attempt.success)
-        Meteor.users.update(this.userId, {$inc: {score: task.cost}});
+        Meteor.users.update(this.userId, {$inc: {score: task.cost}, $set: {lastSuccess: Date.now()}});
       else
         Meteor.users.update(this.userId, {$inc: {score: -task.penalty}});
       Attempts.insert(attempt);
