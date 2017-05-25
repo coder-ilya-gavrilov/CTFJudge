@@ -1,5 +1,3 @@
-import { userCompare } from '/client/shared/userCompare';
-
 Template.scoreboard.helpers({
   users(){
     return Meteor.users.find({visible: true}, {sort: {score: -1, lastSuccess: 1}});
