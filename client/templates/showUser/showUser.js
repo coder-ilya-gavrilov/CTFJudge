@@ -7,7 +7,7 @@ Template.showUser.helpers({
     return Meteor.users.findOne(FlowRouter.getParam('_id'));
   },
   solutions(){
-    var solutions = Attempts.find({userId: FlowRouter.getParam('_id'), success: true}).map(attempt => Tasks.findOne(attempt.task).name).join(", ");
+    let solutions = Attempts.find({userId: FlowRouter.getParam('_id'), success: true}).map(attempt => Tasks.findOne(attempt.task).name).join(", ");
     return (solutions == "") ? "Этот пользователь ещё ничего не решил" : "Решенные задания: " + solutions;
   },
   checkedIfVisible() {
