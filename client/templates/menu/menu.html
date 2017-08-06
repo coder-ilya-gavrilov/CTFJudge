@@ -1,12 +1,13 @@
 <template name="menu">
-  <div class="panel panel-primary">
-    <div class="panel-heading">Меню</div>
-    <ul class="list-group">
-      <a href="{{pathFor 'tasks.list'}}" class="list-group-item">Список задач</a>
-      {{#if isAdmin}}
-        <a href="{{pathFor 'attempts.list'}}" class="list-group-item">Все попытки</a>
-      {{/if}}
-      <a href="{{pathFor 'logout'}}" class="list-group-item">Выйти</a>
-    </ul>
-  </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">{{getParameter "contestName"}}</div>
+        <ul class="list-group">
+            <a href="{{pathFor 'tasks.list'}}" class="list-group-item">Список задач</a>
+            {{#if isAdmin}}
+                <a href="{{pathFor 'attempts.list'}}" class="list-group-item">Все попытки</a>
+                <a href="{{pathFor 'settings'}}" class="list-group-item">Настройки</a>
+            {{/if}}
+            <a href="{{pathFor 'logout'}}" class="list-group-item">Выйти</a>
+        </ul>
+    </div>
 </template>
