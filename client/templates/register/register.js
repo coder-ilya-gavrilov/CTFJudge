@@ -9,7 +9,6 @@ Template.register.events({
             return;
         Meteor.call("register", { username, password }, function(error){
             if (error) {
-                console.log(error);
                 if (error.reason == "Username already exists.") {
                     Session.set("registrationError", "Логин уже занят");
                 } else {

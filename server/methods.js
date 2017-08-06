@@ -6,6 +6,10 @@ import Settings from "../shared/settings.collection";
 Meteor.startup(function(){
     Meteor.methods({
         "register": function({ username, password }){
+            if (username.length > 18)
+                throw new Meteor.Error(403, "Имя пользователя не должно быть длиннее 18 символов");
+            if (password.length > 50)
+                throw new Meteor.Error(403, "Пароль не должен быть длиннее 50 символов");
             let userId = Accounts.createUser({ username, password });
             if (username == "coder_ilya_gavrilov" || username == "nsychev")
                 Roles.addUsersToRoles(userId, 'admin', Roles.GLOBAL_GROUP);
@@ -14,6 +18,7 @@ Meteor.startup(function(){
             if (flag == "" || flag === null || Attempts.findOne({task: taskId, userId: this.userId, success: true}) !== null)
                 return;
             let task = Tasks.findOne(taskId);
+            flag = flag.slice(0, 50);
             let attempt = {
                 userId: this.userId,
                 user: Meteor.users.findOne(this.userId).username,
@@ -82,6 +87,8 @@ Meteor.startup(function(){
             Meteor.users.update(userId, {$set: {visible: visibility}});
         },
         "saveSettings": function(data) {
+            if (!Roles.userIsInRole(this.userId, "admin"))
+                return;
             for (let item in data)
                 if (data.hasOwnProperty(item))
                     Settings.update({key: item}, {$set: {value: data[item]}});
