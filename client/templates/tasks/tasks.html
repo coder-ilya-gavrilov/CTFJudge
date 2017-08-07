@@ -1,27 +1,40 @@
 <template name="tasks">
-  <div class="panel panel-default">
-    <table id="tasks" class="table table-hover table-stackable">
-      <thead>
-        <tr>
-          <th>Задача</th>
-          <th>Стоимость</th>
-          <th>Категория</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each task in tasks}}
-          <tr data-id={{task._id}} class={{taskCompletion(task)}}>
-            <td>{{task.name}}</td>
-            <td>{{task.cost}}</td>
-            <td>{{task.category}}</td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
-    {{#if isAdmin}}
-      <ui class="list-group">
-        <a href="{{pathFor 'tasks.add'}}" class="list-group-item">Добавить задачу</a>
-      </ui>
+    {{#if areTasksAvailable}}
+        <div class="panel panel-default">
+            <table id="tasks" class="table table-hover table-stackable">
+                <thead>
+                    <tr>
+                        <th>Задача</th>
+                        <th>Стоимость</th>
+                        <th>Категория</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each task in tasks}}
+                        <tr data-id={{task._id}} class={{taskCompletion task}}>
+                            <td>{{task.name}}</td>
+                            <td>{{task.cost}}</td>
+                            <td>{{task.category}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            {{#if isAdmin}}
+                <div class="list-group">
+                    <a href="{{pathFor 'tasks.add'}}" class="list-group-item">Добавить задачу</a>
+                </div>
+            {{/if}}
+        </div>
+    {{else}}
+        <div style="text-align: center;" class="row vertical-offset-100">
+            <h2>Соревнование ещё не началось</h2>
+            {{#if isStarted}}
+                <p>У вас установлены неверные настройки времени!</p>
+                <p>Проверьте ваши настройки и обновите страницу.</p>
+            {{else}}
+                <h2>До начала:</h2>
+                <h1>{{ days }} {{ hours }}:{{ minutes }}:{{ seconds }}</h1>
+            {{/if}}
+        </div>
     {{/if}}
-  </div>
 </template>

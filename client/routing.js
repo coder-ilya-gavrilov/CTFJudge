@@ -24,12 +24,6 @@ FlowRouter.route('/register', {
         BlazeLayout.render('register');
     }
 });
-FlowRouter.route('/start', {
-    name: 'start',
-    action: function(){
-        BlazeLayout.render('layout', {menu: 'menu', body: 'beforeStart'});
-    }
-});
 
 FlowRouter.route('/logout', {
     name: 'auth.logout',
@@ -44,12 +38,14 @@ FlowRouter.route('/logout', {
 let participantRoutes = FlowRouter.group({
     triggersEnter: [function(context, redirect){
         if (Meteor.userId() === null) {
+            Session.set("loginError", "Для просмотра этой страницы необходимо авторизоваться");
+            Session.set("next", context.path);
             redirect(FlowRouter.path('auth.login'));
             return;
         }
         let startTime = (Settings.findOne({key: 'startTime'}) || {}).value;
-        if (moment().diff(startTime) < 0 && !Roles.userIsInRole(Meteor.userId(), "admin"))
-            redirect(FlowRouter.path('start'));
+        if (moment().diff(startTime) < 0 && !Roles.userIsInRole(Meteor.userId(), "admin") && context.path != "/tasks")
+            redirect(FlowRouter.path('tasks.list'));
     }]
 });
 
