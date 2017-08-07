@@ -6,8 +6,8 @@ import Settings from "../shared/settings.collection";
 Meteor.startup(function(){
     Meteor.methods({
         "register": function({ username, password }){
-            if (username.length > 18)
-                throw new Meteor.Error(403, "Имя пользователя не должно быть длиннее 18 символов");
+            if (username.length > 20)
+                throw new Meteor.Error(403, "Имя пользователя не должно быть длиннее 20 символов");
             if (password.length > 50)
                 throw new Meteor.Error(403, "Пароль не должен быть длиннее 50 символов");
             let userId = Accounts.createUser({ username, password });
