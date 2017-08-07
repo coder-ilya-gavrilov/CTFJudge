@@ -57,7 +57,7 @@ Template.editTask.events({
       opened: instance.$("[name='taskOpened']").is(':checked')
     };
     if (id) {
-      data.task = id;
+      data.taskId = id;
       Meteor.call("editTask", data);
       FlowRouter.go('tasks.show', {_id: id});
     } else {

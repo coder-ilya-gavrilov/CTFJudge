@@ -27,11 +27,7 @@ FlowRouter.route('/register', {
 FlowRouter.route('/start', {
     name: 'start',
     action: function(){
-        let startTime = (Settings.findOne({key: 'startTime'}) || {}).value;
-        if (moment().diff(startTime) >= 0)
-            FlowRouter.go("tasks.list");
-        else
-            BlazeLayout.render('layout', {menu: 'menu', body: 'beforeStart'});
+        BlazeLayout.render('layout', {menu: 'menu', body: 'beforeStart'});
     }
 });
 
