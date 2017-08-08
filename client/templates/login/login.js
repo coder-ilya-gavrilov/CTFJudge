@@ -9,7 +9,7 @@ Template.login.events({
         if (login === "" || password === "")
             return;
         Meteor.loginWithPassword(login, password, function(error){
-            if (error) {;
+            if (error) {
                 if (error.reason == "User not found") {
                     Session.set("loginError", "Неверный логин");
                 } else if (error.reason == "Incorrect password") {
@@ -29,5 +29,9 @@ Template.login.events({
 Template.login.helpers({
     loginError() {
         return Session.get('loginError');
+    },
+    'click .alert-dismissible .close'(event){
+        event.preventDefault();
+        Session.set("loginError", undefined);
     }
 });

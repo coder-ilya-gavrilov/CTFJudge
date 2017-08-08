@@ -34,7 +34,7 @@ Template.showTask.helpers({
 Template.showTask.events({
   'click #submitTask'(event, instance){
     event.preventDefault();
-    Meteor.call("submitTask", {task: FlowRouter.getParam("_id"), flag: instance.$("[name='flag']").val()}, function(error, result){
+    Meteor.call("submitTask", {taskId: FlowRouter.getParam("_id"), flag: instance.$("[name='flag']").val()}, function(error, result){
       if (!result)
         Session.set("taskFailed", true);
     })

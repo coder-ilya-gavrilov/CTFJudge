@@ -23,5 +23,9 @@ Template.register.events({
 Template.register.helpers({
     registrationError() {
         return Session.get('registrationError');
+    },
+    'click .alert-dismissible .close'(event){
+        event.preventDefault();
+        Session.set("registrationError", undefined);
     }
 });
